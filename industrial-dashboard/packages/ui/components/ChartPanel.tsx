@@ -252,14 +252,14 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
   };
 
   return (
-    <div className='bg-white dark:bg-gray-800 p-4 rounded-lg shadow w-full h-[600px]'>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white">Gráfico de Métricas</h2>
-        <div className="flex items-center gap-4">
+    <div className='bg-white dark:bg-gray-800 p-3 sm:p-4 rounded-lg shadow w-full max-w-full overflow-hidden'>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3 sm:gap-0">
+        <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Gráfico de Métricas</h2>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
           {/* Seleção de métricas */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Exibir:</span>
-            <div className="flex gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">Exibir:</span>
+            <div className="flex gap-1 sm:gap-2">
               <button
                 onClick={() => toggleMetric('temperature')}
                 className={`px-2 py-1 text-xs rounded ${
@@ -295,7 +295,7 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
           
           {/* Seleção de período */}
           <div className="flex items-center gap-2">
-            <label htmlFor="period-select" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label htmlFor="period-select" className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
               Período:
             </label>
             <select
@@ -308,7 +308,7 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
                   onPeriodChange(newPeriod);
                 }
               }}
-              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400"
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md px-2 sm:px-3 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 min-w-[80px]"
             >
               {periodOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -321,31 +321,31 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
       </div>
 
       {/* Legenda com informações completas */}
-      <div className="mb-3 text-xs text-gray-600 dark:text-gray-400">
-        <div className="flex flex-wrap gap-6 mb-1">
+      <div className="mb-2 sm:mb-3 text-xs text-gray-600 dark:text-gray-400">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-1 sm:gap-2 lg:gap-6 mb-1">
           {visibleMetrics.temperature && (
             <div className="flex items-center gap-2">
-              <span className="w-3 h-0.5 bg-amber-500 inline-block"></span>
-              <span>Temp: {METRIC_CONFIGS.temperature.ideal.toFixed(1)}{METRIC_CONFIGS.temperature.unit} ideal | {METRIC_CONFIGS.temperature.min.toFixed(1)}-{METRIC_CONFIGS.temperature.max.toFixed(1)}{METRIC_CONFIGS.temperature.unit} limites</span>
+              <span className="w-3 h-0.5 bg-amber-500 inline-block flex-shrink-0"></span>
+              <span className="text-xs">Temp: {METRIC_CONFIGS.temperature.ideal.toFixed(1)}{METRIC_CONFIGS.temperature.unit} ideal | {METRIC_CONFIGS.temperature.min.toFixed(1)}-{METRIC_CONFIGS.temperature.max.toFixed(1)}{METRIC_CONFIGS.temperature.unit}</span>
             </div>
           )}
           {visibleMetrics.rpm && (
             <div className="flex items-center gap-2">
-              <span className="w-3 h-0.5 bg-blue-500 inline-block"></span>
-              <span>RPM: {METRIC_CONFIGS.rpm.ideal} ideal | {METRIC_CONFIGS.rpm.min}-{METRIC_CONFIGS.rpm.max} limites</span>
+              <span className="w-3 h-0.5 bg-blue-500 inline-block flex-shrink-0"></span>
+              <span className="text-xs">RPM: {METRIC_CONFIGS.rpm.ideal} ideal | {METRIC_CONFIGS.rpm.min}-{METRIC_CONFIGS.rpm.max}</span>
             </div>
           )}
           {visibleMetrics.efficiency && (
             <div className="flex items-center gap-2">
-              <span className="w-3 h-0.5 bg-green-500 inline-block"></span>
-              <span>Efic: {METRIC_CONFIGS.efficiency.ideal}% ideal | {METRIC_CONFIGS.efficiency.min}-{METRIC_CONFIGS.efficiency.max}% limites</span>
+              <span className="w-3 h-0.5 bg-green-500 inline-block flex-shrink-0"></span>
+              <span className="text-xs">Efic: {METRIC_CONFIGS.efficiency.ideal}% ideal | {METRIC_CONFIGS.efficiency.min}-{METRIC_CONFIGS.efficiency.max}%</span>
             </div>
           )}
         </div>
         {Object.values(visibleMetrics).filter(Boolean).length === 1 && (
-          <div className="flex flex-wrap gap-4 mb-1 text-xs">
+          <div className="flex flex-wrap gap-3 sm:gap-4 mb-1 text-xs">
             <div className="flex items-center gap-1">
-              <span className="w-4 h-0.5 border-t-2 border-dashed border-green-500 inline-block"></span>
+              <span className="w-3 sm:w-4 h-0.5 border-t-2 border-dashed border-green-500 inline-block flex-shrink-0"></span>
               <span>Ideal</span>
             </div>
             <div className="flex items-center gap-1">
@@ -365,21 +365,33 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
         )}
       </div>
 
-      <div className="h-[500px]">
+      <div className="h-[300px] sm:h-[400px] lg:h-[500px] w-full overflow-hidden">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 10 }}>
+          <LineChart 
+            data={chartData} 
+            margin={{ 
+              top: 10, 
+              right: 15, 
+              left: 15, 
+              bottom: 50 
+            }}
+          >
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
             <XAxis 
               dataKey="time"
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10 }}
               interval={getTickInterval()}
               className="text-gray-600 dark:text-gray-400"
+              angle={-45}
+              textAnchor="end"
+              height={60}
             />
             
             {/* Eixo Y dinâmico baseado nas métricas visíveis */}
             <YAxis 
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10 }}
               domain={currentScale}
+              width={40}
               className="text-gray-600 dark:text-gray-400"
             />
             

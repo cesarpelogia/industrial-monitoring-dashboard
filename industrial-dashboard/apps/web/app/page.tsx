@@ -87,70 +87,74 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-6">
-      <Header 
-        isConnected={connectionStatus.isConnected}
-        lastUpdate={connectionStatus.lastUpdate}
-      />
-      
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MachineStatusCard
-          title="Temperatura"
-          value={currentStatus.metrics.temperature}
-          unit="°C"
-          subtitle="Máx: 85°C"
-          trend={currentStatus.metrics.temperature > 80 ? 'up' : 'stable'}
-          statusColor="text-orange-500"
-          maxValue={85}
-          minValue={60}
-          isAlert={currentStatus.metrics.temperature > 85}
-          isTemperature={true}
-          temperatureUnit={config.temperatureUnit}
+    <main className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 sm:p-6 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto">
+        <Header 
+          isConnected={connectionStatus.isConnected}
+          lastUpdate={connectionStatus.lastUpdate}
         />
-        <MachineStatusCard
-          title="RPM"
-          value={currentStatus.metrics.rpm}
-          subtitle="Máx: 1500"
-          trend={currentStatus.metrics.rpm < 1100 ? 'down' : 'stable'}
-          statusColor="text-blue-500"
-          maxValue={1500}
-          minValue={800}
-          isAlert={currentStatus.metrics.rpm < 1000}
-        />
-        <MachineStatusCard
-          title="Eficiência"
-          value={currentStatus.metrics.efficiency}
-          unit="%"
-          subtitle="Meta: 95%"
-          trend={currentStatus.metrics.efficiency >= 95 ? 'up' : 'stable'}
-          statusColor="text-green-600"
-          maxValue={100}
-          minValue={0}
-        />
-        <MachineStatusCard
-          title="Tempo de Operação"
-          value={formatUptime(currentStatus.metrics.uptime)}
-          subtitle="Tempo contínuo"
-          machineState={currentStatus.state}
-          statusColor="text-green-600"
-          trend="stable"
-        />
-      </section>
-      <section className="mt-6">
-        <ChartPanel 
-          data={chartData} 
-          onPeriodChange={handlePeriodChange}
-          onLimitViolation={handleLimitViolation}
-        />
-      </section>
-      <section className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-4'>
-        <AlertList 
-          alerts={alerts}
-          onAcknowledge={handleAcknowledgeAlert}
-          maxVisible={5}
-        />
-        <Efficiency oeeData={currentStatus.oee} />
-      </section>
+        
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <MachineStatusCard
+            title="Temperatura"
+            value={currentStatus.metrics.temperature}
+            unit="°C"
+            subtitle="Máx: 85°C"
+            trend={currentStatus.metrics.temperature > 80 ? 'up' : 'stable'}
+            statusColor="text-orange-500"
+            maxValue={85}
+            minValue={60}
+            isAlert={currentStatus.metrics.temperature > 85}
+            isTemperature={true}
+            temperatureUnit={config.temperatureUnit}
+          />
+          <MachineStatusCard
+            title="RPM"
+            value={currentStatus.metrics.rpm}
+            subtitle="Máx: 1500"
+            trend={currentStatus.metrics.rpm < 1100 ? 'down' : 'stable'}
+            statusColor="text-blue-500"
+            maxValue={1500}
+            minValue={800}
+            isAlert={currentStatus.metrics.rpm < 1000}
+          />
+          <MachineStatusCard
+            title="Eficiência"
+            value={currentStatus.metrics.efficiency}
+            unit="%"
+            subtitle="Meta: 95%"
+            trend={currentStatus.metrics.efficiency >= 95 ? 'up' : 'stable'}
+            statusColor="text-green-600"
+            maxValue={100}
+            minValue={0}
+          />
+          <MachineStatusCard
+            title="Tempo de Operação"
+            value={formatUptime(currentStatus.metrics.uptime)}
+            subtitle="Tempo contínuo"
+            machineState={currentStatus.state}
+            statusColor="text-green-600"
+            trend="stable"
+          />
+        </section>
+        
+        <section className="mb-6">
+          <ChartPanel 
+            data={chartData} 
+            onPeriodChange={handlePeriodChange}
+            onLimitViolation={handleLimitViolation}
+          />
+        </section>
+        
+        <section className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+          <AlertList 
+            alerts={alerts}
+            onAcknowledge={handleAcknowledgeAlert}
+            maxVisible={5}
+          />
+          <Efficiency oeeData={currentStatus.oee} />
+        </section>
+      </div>
     </main>
   );
 }
