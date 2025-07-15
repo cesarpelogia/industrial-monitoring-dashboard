@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ConfigModal } from './ConfigModal';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -120,9 +121,19 @@ export function Header({ isConnected,lastUpdate }: Omit<HeaderProps, 'isDarkMode
         <header className="w-full flex items-center justify-between bg-white dark:bg-gray-800 shadow px-6 py-4 rounded-md mb-6">
             {/* Lado esquerdo: Logo + Título */}
             <div className="flex items-center space-x-4">
-                <span className={`font-bold text-xl ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
-                    🏭 Industrial Dashboard
-                </span>
+                <div className="flex items-center space-x-3">
+                    <Image 
+                        src="/stw-logo.png" 
+                        alt="STW Logo" 
+                        width={128}
+                        height={64}
+                        className="object-contain"
+                        priority
+                    />
+                    <span className={`font-bold text-xl ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                        Industrial Dashboard
+                    </span>
+                </div>
                 <h1 className="text-lg font-semibold dark:text-white">Dashboard de Monitoramento</h1>
             </div>
     
