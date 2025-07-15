@@ -49,10 +49,21 @@ export interface ConnectionStatus {
 }
 
 export type ThemeMode = 'light' | 'dark';
+export type TemperatureUnit = 'celsius' | 'fahrenheit';
 
 export interface DashboardConfig {
   theme: ThemeMode;
-  refreshInterval: number;
+  refreshInterval: number; // em milissegundos (2000-10000)
+  temperatureUnit: TemperatureUnit;
   alertSound: boolean;
   autoAcknowledge: boolean;
 }
+
+// Configurações padrão
+export const DEFAULT_CONFIG: DashboardConfig = {
+  theme: 'light',
+  refreshInterval: 3000, // 3 segundos
+  temperatureUnit: 'celsius',
+  alertSound: true,
+  autoAcknowledge: false,
+};
