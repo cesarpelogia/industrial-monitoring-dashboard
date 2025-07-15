@@ -4,6 +4,14 @@
 
 > Sistema focado no monitoramento de **equipamento misturador** com visibilidade completa sobre estado da máquina, métricas de performance e alertas operacionais.
 
+## 🎥 Demonstração em Vídeo
+
+[![Vídeo de Demonstração](https://img.shields.io/badge/▶️_Assistir_Demonstração-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=q1kMp-mmYv0)
+
+**📹 [https://www.youtube.com/watch?v=q1kMp-mmYv0](https://www.youtube.com/watch?v=q1kMp-mmYv0)**
+
+> Vídeo completo mostrando todas as funcionalidades do dashboard, arquitetura técnica, e demonstração em tempo real do sistema de monitoramento industrial.
+
 ## 🚀 Execução:
 
 ```bash
