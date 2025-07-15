@@ -1,6 +1,7 @@
 'use client';
 
-import { MachineStatus } from '../types/index';
+import { MachineStatus, TemperatureUnit } from '../types/index';
+import { formatTemperature, convertTemperature, getTemperatureUnit } from '../lib/utils';
 
 interface MachineStatusCardProps {
   title: string;
@@ -14,6 +15,9 @@ interface MachineStatusCardProps {
   minValue?: number;
   isAlert?: boolean;
   className?: string;
+  // Novos props para temperatura
+  isTemperature?: boolean;
+  temperatureUnit?: TemperatureUnit;
 }
 
 export function MachineStatusCard({
@@ -27,8 +31,31 @@ export function MachineStatusCard({
   maxValue,
   minValue = 0,
   isAlert = false,
-  className = ''
+  className = '',
+  isTemperature = false,
+  temperatureUnit = 'celsius'
 }: MachineStatusCardProps) {
+
+  // Converte temperatura se necessário
+  const getDisplayValue = () => {
+    if (isTemperature && typeof value === 'number') {
+      // Se é temperatura, converte de Celsius (padrão do sistema) para a unidade configurada
+      const convertedValue = convertTemperature(value, 'celsius', temperatureUnit);
+      return convertedValue;
+    }
+    return value;
+  };
+
+  // Obtém a unidade de exibição
+  const getDisplayUnit = () => {
+    if (isTemperature) {
+      return temperatureUnit === 'celsius' ? '°C' : '°F';
+    }
+    return unit;
+  };
+
+  const displayValue = getDisplayValue();
+  const displayUnit = getDisplayUnit();
 
   // Configurações de estado da máquina
   const getStateConfig = (state?: MachineStatus['state']) => {
@@ -103,8 +130,8 @@ export function MachineStatusCard({
 
   // Calcula porcentagem para barra de progresso
   const getProgressPercentage = () => {
-    if (typeof value !== 'number' || !maxValue) return 0;
-    return Math.min(100, Math.max(0, ((value - minValue) / (maxValue - minValue)) * 100));
+    if (typeof displayValue !== 'number' || !maxValue) return 0;
+    return Math.min(100, Math.max(0, ((displayValue - minValue) / (maxValue - minValue)) * 100));
   };
 
   // Configurações de alerta
@@ -150,10 +177,10 @@ export function MachineStatusCard({
       <div className="mb-3">
         <div className="flex items-baseline gap-1">
           <span className={`text-2xl font-bold ${isAlert ? 'text-red-600 dark:text-red-400' : statusColor + ' dark:brightness-110'}`}>
-            {typeof value === 'number' ? value.toFixed(1) : value}
+            {typeof displayValue === 'number' ? displayValue.toFixed(1) : displayValue}
           </span>
-          {unit && (
-            <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">{unit}</span>
+          {displayUnit && (
+            <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">{displayUnit}</span>
           )}
         </div>
         
@@ -163,7 +190,7 @@ export function MachineStatusCard({
       </div>
 
       {/* Barra de progresso (apenas para valores numéricos com maxValue) */}
-      {typeof value === 'number' && maxValue && (
+      {typeof displayValue === 'number' && maxValue && (
         <div className="mb-2">
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
             <div
