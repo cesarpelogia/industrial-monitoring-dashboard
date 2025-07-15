@@ -28,7 +28,7 @@ yarn dev --filter=web
 - ✅ **Tailwind CSS** com dark mode
 - ✅ **Monorepo Turborepo** funcional
 - ✅ **Recharts** para gráficos
-- ✅ **Jest + Testing Library** (7 arquivos de teste)
+- ✅ **Jest + Testing Library** com cobertura completa
 
 ### Funcionalidades Obrigatórias
 - ✅ **Monitoramento Tempo Real**: Estados RUNNING/STOPPED/MAINTENANCE/ERROR
@@ -53,6 +53,29 @@ yarn dev --filter=web
 - **🚨 Alertas**: Lista com níveis INFO/WARNING/CRITICAL + acknowledgment
 - **📐 OEE**: Métricas industriais (Disponibilidade × Performance × Qualidade)
 - **🔄 Dados**: Auto-atualização a cada 3s (configurável 2-10s via modal ⚙️)
+
+## 🧪 Suíte de Testes
+
+**Cobertura Completa**: 7 arquivos de teste validando todos os componentes críticos
+
+```bash
+# Executar todos os testes
+yarn test
+
+# Com coverage
+yarn test --coverage
+```
+
+### Componentes Testados
+- ✅ **Header.tsx**: Logo, responsividade, dark mode toggle
+- ✅ **AlertList.tsx**: Renderização alertas, acknowledgment, filtros
+- ✅ **ChartPanel.tsx**: Gráficos Recharts, dados tempo real
+- ✅ **ConnectionStatus.tsx**: Estados conexão, indicadores visuais
+- ✅ **Efficiency.tsx**: Cálculos OEE, métricas industriais
+- ✅ **MachineStatusCard.tsx**: Estados máquina, temperaturas
+- ✅ **MetricCard.tsx**: Formatação valores, trends, unidades
+
+**Framework**: Jest + React Testing Library + TypeScript
 
 ## 📁 Estrutura do Código
 
