@@ -1,102 +1,112 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+'use client';
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
+import { dataSimulator } from '../../../packages/ui/lib/dataSimulator';
+import { Header } from '../../../packages/ui/components/Header';
+import { MachineStatusCard } from '../../../packages/ui/components/MachineStatusCard';
+import { ChartPanel } from '../../../packages/ui/components/ChartPanel';
+import { AlertList } from '../../../packages/ui/components/AlertList';
+import { Efficiency } from '../../../packages/ui/components/Efficiency';
+import { formatUptime } from '../../../packages/ui/lib/utils';
+import { useState, useEffect } from 'react';
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [currentStatus, setCurrentStatus] = useState(dataSimulator.getCurrentStatus());
+  const [connectionStatus, setConnectionStatus] = useState(dataSimulator.getConnectionStatus());
+  const [selectedPeriod, setSelectedPeriod] = useState(60); 
+  const [chartData, setChartData] = useState(dataSimulator.getHistoryByPeriod(60));
+  const [alerts, setAlerts] = useState(dataSimulator.getAlerts());
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.com/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.com?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.com →
-        </a>
-      </footer>
-    </div>
+  useEffect(() => {
+    const unsubscribe = dataSimulator.subscribe((data) => {
+      setCurrentStatus(data);
+      setConnectionStatus(dataSimulator.getConnectionStatus());
+      setAlerts(dataSimulator.getAlerts());
+      setChartData(dataSimulator.getHistoryByPeriod(selectedPeriod));
+    });
+
+    return unsubscribe;
+  }, [selectedPeriod]);
+
+  const handleAcknowledgeAlert = (alertId: string) => {
+    dataSimulator.acknowledgeAlert(alertId);
+    setAlerts(dataSimulator.getAlerts());
+  };
+
+  const handlePeriodChange = (minutes: number) => {
+    setSelectedPeriod(minutes);
+    setChartData(dataSimulator.getHistoryByPeriod(minutes));
+  };
+
+  const handleLimitViolation = (metric: string, value: number, limit: number) => {
+    // O simulador já gera os alertas automaticamente
+    // Este callback pode ser usado para logs ou outras ações
+    console.log(`Limite violado - ${metric}: ${value} (limite: ${limit})`);
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-6">
+      <Header 
+        isConnected={connectionStatus.isConnected}
+        lastUpdate={connectionStatus.lastUpdate}
+      />
+      
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MachineStatusCard
+          title="Temperatura"
+          value={currentStatus.metrics.temperature}
+          unit="°C"
+          subtitle="Máx: 85°C"
+          trend={currentStatus.metrics.temperature > 80 ? 'up' : 'stable'}
+          statusColor="text-orange-500"
+          maxValue={85}
+          minValue={60}
+          isAlert={currentStatus.metrics.temperature > 85}
+        />
+        <MachineStatusCard
+          title="RPM"
+          value={currentStatus.metrics.rpm}
+          subtitle="Máx: 1500"
+          trend={currentStatus.metrics.rpm < 1100 ? 'down' : 'stable'}
+          statusColor="text-blue-500"
+          maxValue={1500}
+          minValue={800}
+          isAlert={currentStatus.metrics.rpm < 1000}
+        />
+        <MachineStatusCard
+          title="Eficiência"
+          value={currentStatus.metrics.efficiency}
+          unit="%"
+          subtitle="Meta: 95%"
+          trend={currentStatus.metrics.efficiency >= 95 ? 'up' : 'stable'}
+          statusColor="text-green-600"
+          maxValue={100}
+          minValue={0}
+        />
+        <MachineStatusCard
+          title="Tempo de Operação"
+          value={formatUptime(currentStatus.metrics.uptime)}
+          subtitle="Tempo contínuo"
+          machineState={currentStatus.state}
+          statusColor="text-green-600"
+          trend="stable"
+        />
+      </section>
+      <section className="mt-6">
+        <ChartPanel 
+          data={chartData} 
+          onPeriodChange={handlePeriodChange}
+          onLimitViolation={handleLimitViolation}
+        />
+      </section>
+      <section className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <AlertList 
+          alerts={alerts}
+          onAcknowledge={handleAcknowledgeAlert}
+          maxVisible={5}
+        />
+        <Efficiency oeeData={currentStatus.oee} />
+      </section>
+    </main>
   );
 }
