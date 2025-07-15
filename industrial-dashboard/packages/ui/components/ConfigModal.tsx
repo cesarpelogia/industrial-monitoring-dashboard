@@ -88,25 +88,14 @@ export function ConfigModal({ isOpen, onClose }: ConfigModalProps) {
             <div className="flex space-x-3">
               <button
                 onClick={() => handleUnitChange('celsius')}
-                className={`flex-1 py-2 px-4 rounded-lg border transition-colors ${
-                  config.temperatureUnit === 'celsius'
-                    ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
+                className="flex-1 py-2 px-4 rounded-lg border border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300 cursor-default"
               >
                 °C (Celsius)
               </button>
-              <button
-                onClick={() => handleUnitChange('fahrenheit')}
-                className={`flex-1 py-2 px-4 rounded-lg border transition-colors ${
-                  config.temperatureUnit === 'fahrenheit'
-                    ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`}
-              >
-                °F (Fahrenheit)
-              </button>
             </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Dashboard configurado para Celsius apenas
+            </p>
           </div>
 
           {/* Info */}

@@ -49,7 +49,7 @@ export interface ConnectionStatus {
 }
 
 export type ThemeMode = 'light' | 'dark';
-export type TemperatureUnit = 'celsius' | 'fahrenheit';
+export type TemperatureUnit = 'celsius';
 
 export interface DashboardConfig {
   theme: ThemeMode;

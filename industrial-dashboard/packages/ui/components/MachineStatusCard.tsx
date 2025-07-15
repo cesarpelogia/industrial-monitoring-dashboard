@@ -1,7 +1,7 @@
 'use client';
 
 import { MachineStatus, TemperatureUnit } from '../types/index';
-import { formatTemperature, convertTemperature, getTemperatureUnit } from '../lib/utils';
+import { convertTemperature } from '../lib/utils';
 
 interface MachineStatusCardProps {
   title: string;
@@ -49,7 +49,7 @@ export function MachineStatusCard({
   // Obtém a unidade de exibição
   const getDisplayUnit = () => {
     if (isTemperature) {
-      return temperatureUnit === 'celsius' ? '°C' : '°F';
+      return '°C';
     }
     return unit;
   };

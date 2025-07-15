@@ -23,7 +23,7 @@ export function useConfig() {
     updateConfig({ refreshInterval: validInterval });
   };
 
-  const setTemperatureUnit = (unit: 'celsius' | 'fahrenheit') => {
+  const setTemperatureUnit = (unit: 'celsius') => {
     updateConfig({ temperatureUnit: unit });
   };
 

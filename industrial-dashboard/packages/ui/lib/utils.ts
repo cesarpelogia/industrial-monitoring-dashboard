@@ -1,34 +1,18 @@
 import { TemperatureUnit } from '../types/index';
 
-// Conversões de temperatura
-export function celsiusToFahrenheit(celsius: number): number {
-  return (celsius * 9/5) + 32;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function convertTemperature(value: number, _fromUnit: TemperatureUnit, _toUnit: TemperatureUnit): number {
+  return value; // Sempre retorna o valor original já que só temos Celsius
 }
 
-export function fahrenheitToCelsius(fahrenheit: number): number {
-  return (fahrenheit - 32) * 5/9;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function formatTemperature(value: number, _unit: TemperatureUnit, decimals: number = 1): string {
+  return `${value.toFixed(decimals)}°C`;
 }
 
-export function convertTemperature(value: number, fromUnit: TemperatureUnit, toUnit: TemperatureUnit): number {
-  if (fromUnit === toUnit) return value;
-  
-  if (fromUnit === 'celsius' && toUnit === 'fahrenheit') {
-    return celsiusToFahrenheit(value);
-  }
-  
-  if (fromUnit === 'fahrenheit' && toUnit === 'celsius') {
-    return fahrenheitToCelsius(value);
-  }
-  
-  return value;
-}
-
-export function formatTemperature(value: number, unit: TemperatureUnit, decimals: number = 1): string {
-  return `${value.toFixed(decimals)}°${unit === 'celsius' ? 'C' : 'F'}`;
-}
-
-export function getTemperatureUnit(unit: TemperatureUnit): string {
-  return unit === 'celsius' ? '°C' : '°F';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getTemperatureUnit(_unit: TemperatureUnit): string {
+  return '°C';
 }
 
 export function formatUptime(uptimeMinutos: number): string {
