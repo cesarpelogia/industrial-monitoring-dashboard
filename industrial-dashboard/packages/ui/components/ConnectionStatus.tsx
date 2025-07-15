@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { formatShortRelativeTime, useIsClient } from '../lib/dateUtils';
 
 interface ConnectionStatusProps {
   isConnected: boolean;
@@ -26,9 +27,12 @@ export function ConnectionStatus({
   const [history, setHistory] = useState<ConnectionHistory[]>([]);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [connectionQuality, setConnectionQuality] = useState<'excellent' | 'good' | 'poor' | 'offline'>('excellent');
+  const isClient = useIsClient();
 
   // Monitora mudanças de conexão e atualiza histórico
   useEffect(() => {
+    if (!isClient) return; // Só executa no cliente
+
     const newEvent: ConnectionHistory = {
       timestamp: new Date(),
       event: isConnected ? 'connected' : 'disconnected'
@@ -39,7 +43,7 @@ export function ConnectionStatus({
       // Mantém apenas os últimos 10 eventos
       return updated.slice(0, 10);
     });
-  }, [isConnected]);
+  }, [isConnected, isClient]);
 
   // Calcula qualidade da conexão baseada na latência
   useEffect(() => {
@@ -131,15 +135,7 @@ export function ConnectionStatus({
   };
 
   const formatRelativeTime = (date: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffSecs = Math.floor(diffMs / 1000);
-    const diffMins = Math.floor(diffSecs / 60);
-
-    if (diffSecs < 10) return 'agora';
-    if (diffSecs < 60) return `${diffSecs}s atrás`;
-    if (diffMins < 60) return `${diffMins}min atrás`;
-    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return formatShortRelativeTime(date, isClient);
   };
 
   const status = getStatusConfig();

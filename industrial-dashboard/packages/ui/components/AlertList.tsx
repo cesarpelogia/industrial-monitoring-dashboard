@@ -1,6 +1,7 @@
 'use client';
 
 import { Alert } from '../types/index';
+import { formatRelativeTime, useIsClient } from '../lib/dateUtils';
 
 export interface AlertListProps {
   alerts: Alert[];
@@ -9,6 +10,8 @@ export interface AlertListProps {
 }
 
 export function AlertList({ alerts, onAcknowledge, maxVisible = 5 }: AlertListProps) {
+  const isClient = useIsClient();
+
   const sortedAlerts = alerts
     .sort((a, b) => {
       // Primeiro por nível de prioridade
@@ -56,22 +59,7 @@ export function AlertList({ alerts, onAcknowledge, maxVisible = 5 }: AlertListPr
   };
 
   const formatTimestamp = (timestamp: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - timestamp.getTime();
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    
-    if (diffMins < 1) return 'Agora';
-    if (diffMins < 60) return `${diffMins}min atrás`;
-    
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h atrás`;
-    
-    return timestamp.toLocaleDateString('pt-BR', { 
-      day: '2-digit', 
-      month: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return formatRelativeTime(timestamp, isClient);
   };
 
   if (alerts.length === 0) {
