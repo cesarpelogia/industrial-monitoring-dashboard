@@ -4,6 +4,12 @@
 node_modules
 .pnp
 .pnp.js
+.yarn/install-state.gz
+# Keep .yarn/releases/ for Yarn binary
+
+# Package manager locks (keep yarn.lock, ignore others)
+package-lock.json
+pnpm-lock.yaml
 
 # Local env files
 .env
@@ -11,9 +17,13 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
+.env*.local
 
 # Testing
 coverage
+.nyc_output
+test-results/
+playwright-report/
 
 # Turbo
 .turbo
@@ -26,13 +36,90 @@ coverage
 out/
 build
 dist
-
+*.tsbuildinfo
+next-env.d.ts
 
 # Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Misc
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+logs
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 *.pem
+
+# Temporary folders
+tmp/
+temp/
+
+# Jest coverage directory used by tools like Istanbul
+coverage/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Storybook build outputs
+storybook-static
+
+# Database files (if any SQLite is added later)
+*.sqlite
+*.sqlite3
+*.db
+
+# Editor directories and files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

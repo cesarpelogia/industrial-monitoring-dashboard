@@ -13,19 +13,26 @@ export function useLocalStorage<T>(
   initialValue: T
 ): [T, (value: SetValue<T>) => void] {
   // Estado interno para armazenar o valor
-  const [storedValue, setStoredValue] = useState<T>(() => {
+  const [storedValue, setStoredValue] = useState<T>(initialValue)
+  const [mounted, setMounted] = useState(false)
+
+  // Carrega valor do localStorage após hidratação
+  useEffect(() => {
+    setMounted(true)
+    
     if (typeof window === 'undefined' || !window.localStorage) {
-      return initialValue
+      return
     }
 
     try {
       const item = window.localStorage.getItem(key)
-      return item ? JSON.parse(item) : initialValue
+      if (item) {
+        setStoredValue(JSON.parse(item))
+      }
     } catch (error) {
       console.warn(`Erro ao ler do localStorage para chave "${key}":`, error)
-      return initialValue
     }
-  })
+  }, [key])
 
   // Função para atualizar o valor
   const setValue = useCallback(
@@ -35,8 +42,8 @@ export function useLocalStorage<T>(
         setStoredValue((currentValue) => {
           const valueToStore = value instanceof Function ? value(currentValue) : value
           
-          // Salva no localStorage
-          if (typeof window !== 'undefined' && window.localStorage) {
+          // Salva no localStorage apenas se estiver montado
+          if (mounted && typeof window !== 'undefined' && window.localStorage) {
             window.localStorage.setItem(key, JSON.stringify(valueToStore))
             
             // Dispara evento personalizado para sincronizar outras instâncias
@@ -60,7 +67,7 @@ export function useLocalStorage<T>(
         })
       }
     },
-    [key]
+    [key, mounted]
   )
 
   // Listener para mudanças do localStorage (sincronização entre abas)

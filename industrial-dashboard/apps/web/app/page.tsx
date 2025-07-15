@@ -8,23 +8,39 @@ import { AlertList } from '../../../packages/ui/components/AlertList';
 import { Efficiency } from '../../../packages/ui/components/Efficiency';
 import { formatUptime } from '../../../packages/ui/lib/utils';
 import { useConfig } from '../../../packages/ui/hooks/useConfig';
+import { useIsClient } from '../../../packages/ui/lib/dateUtils';
 import { useState, useEffect } from 'react';
 
 
 export default function Home() {
   const { config } = useConfig();
-  const [currentStatus, setCurrentStatus] = useState(dataSimulator.getCurrentStatus());
-  const [connectionStatus, setConnectionStatus] = useState(dataSimulator.getConnectionStatus());
+  const isClient = useIsClient();
+  const [currentStatus, setCurrentStatus] = useState(() => dataSimulator.getCurrentStatus());
+  const [connectionStatus, setConnectionStatus] = useState(() => dataSimulator.getConnectionStatus());
   const [selectedPeriod, setSelectedPeriod] = useState(60); 
-  const [chartData, setChartData] = useState(dataSimulator.getHistoryByPeriod(60));
-  const [alerts, setAlerts] = useState(dataSimulator.getAlerts());
+  const [chartData, setChartData] = useState(() => dataSimulator.getHistoryByPeriod(60));
+  const [alerts, setAlerts] = useState(() => dataSimulator.getAlerts());
+
+  // Atualiza dados após hidratação
+  useEffect(() => {
+    if (isClient) {
+      setCurrentStatus(dataSimulator.getCurrentStatus());
+      setConnectionStatus(dataSimulator.getConnectionStatus());
+      setAlerts(dataSimulator.getAlerts());
+      setChartData(dataSimulator.getHistoryByPeriod(60));
+    }
+  }, [isClient]);
 
   // Efeito para aplicar mudanças de intervalo
   useEffect(() => {
-    dataSimulator.setUpdateInterval(config.refreshInterval);
-  }, [config.refreshInterval]);
+    if (isClient) {
+      dataSimulator.setUpdateInterval(config.refreshInterval);
+    }
+  }, [config.refreshInterval, isClient]);
 
   useEffect(() => {
+    if (!isClient) return;
+    
     const unsubscribe = dataSimulator.subscribe((data) => {
       setCurrentStatus(data);
       setConnectionStatus(dataSimulator.getConnectionStatus());
@@ -33,7 +49,26 @@ export default function Home() {
     });
 
     return unsubscribe;
-  }, [selectedPeriod]);
+  }, [selectedPeriod, isClient]);
+
+  // Renderização de loading durante hidratação
+  if (!isClient) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse">
+            <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              ))}
+            </div>
+            <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded mb-6"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleAcknowledgeAlert = (alertId: string) => {
     dataSimulator.acknowledgeAlert(alertId);
@@ -106,7 +141,6 @@ export default function Home() {
           data={chartData} 
           onPeriodChange={handlePeriodChange}
           onLimitViolation={handleLimitViolation}
-          temperatureUnit={config.temperatureUnit}
         />
       </section>
       <section className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-4'>
