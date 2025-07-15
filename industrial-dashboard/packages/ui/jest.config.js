@@ -1,5 +1,5 @@
 /** @type {import('jest').Config} */
-export default {
+module.exports = {
   displayName: '@repo/ui',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
@@ -7,7 +7,7 @@ export default {
     '<rootDir>/**/__tests__/**/*.(test|spec).(ts|tsx|js)',
     '<rootDir>/**/?(*.)(test|spec).(ts|tsx|js)'
   ],
-  moduleNameMapping: {
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
   collectCoverageFrom: [

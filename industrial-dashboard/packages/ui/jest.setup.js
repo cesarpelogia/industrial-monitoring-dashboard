@@ -1,7 +1,7 @@
 /* eslint-env jest */
 /* global global, jest */
 // Jest setup file for @repo/ui package
-import '@testing-library/jest-dom';
+require('@testing-library/jest-dom');
 
 // Mock IntersectionObserver for components that might use it
 global.IntersectionObserver = class IntersectionObserver {
