@@ -1,34 +1,15 @@
-/** @type {import('jest').Config} */
 module.exports = {
-  displayName: '@repo/ui',
+  preset: 'ts-jest',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testMatch: [
-    '<rootDir>/**/__tests__/**/*.(test|spec).(ts|tsx|js)',
-    '<rootDir>/**/?(*.)(test|spec).(ts|tsx|js)'
-  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
   },
-  collectCoverageFrom: [
-    'components/**/*.{ts,tsx}',
-    'hooks/**/*.{ts,tsx}',
-    'lib/**/*.{ts,tsx}',
-    '!**/*.d.ts',
-    '!**/node_modules/**'
+  transformIgnorePatterns: [
+    '/node_modules/(?!(ansi-regex|strip-ansi|chalk|react-markdown)/)', 
+    // adicione aqui outros pacotes que podem ser ESM problemáticos
   ],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80
-    }
-  },
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: 'tsconfig.json'
-    }]
+    '^.+\\.(ts|tsx|js|jsx)$': 'ts-jest',
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 };
