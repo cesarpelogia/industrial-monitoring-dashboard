@@ -79,7 +79,9 @@ describe('Header Component', () => {
       const props = generateProps();
       render(<Header {...props} />);
 
-      expect(screen.getByText('🏭 Industrial Dashboard')).toBeInTheDocument();
+      // Verifica se o logo STW está presente
+      expect(screen.getByAltText('STW Logo')).toBeInTheDocument();
+      expect(screen.getByText('Industrial Dashboard')).toBeInTheDocument();
       expect(screen.getByText('Dashboard de Monitoramento')).toBeInTheDocument();
     });
 
@@ -88,7 +90,7 @@ describe('Header Component', () => {
       render(<Header {...props} />);
 
       // Logo e título
-      expect(screen.getByText('🏭 Industrial Dashboard')).toBeInTheDocument();
+      expect(screen.getByText('Industrial Dashboard')).toBeInTheDocument();
       expect(screen.getByText('Dashboard de Monitoramento')).toBeInTheDocument();
       
       // Status de conexão

@@ -1,7 +1,8 @@
 /* eslint-env jest */
 /* global global, jest */
 // Jest setup file for @repo/ui package
-require('@testing-library/jest-dom');
+import '@testing-library/jest-dom';
+import React from 'react';
 
 // Mock IntersectionObserver for components that might use it
 global.IntersectionObserver = class IntersectionObserver {
@@ -73,3 +74,19 @@ HTMLCanvasElement.prototype.getContext = jest.fn().mockReturnValue({
   rect: jest.fn(),
   clip: jest.fn(),
 });
+
+// Mock Next.js Image component
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props) => {
+    const { src, alt, width, height, className, ...rest } = props;
+    return React.createElement('img', {
+      src,
+      alt,
+      width,
+      height,
+      className,
+      ...rest
+    });
+  },
+}));

@@ -2,8 +2,8 @@
   "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["node", "react", "react-dom"]
+    "types": ["node", "react", "react-dom", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["src", "components", "hooks", "lib", "types"],
-  "exclude": ["node_modules", "dist", "**/*.test.*", "**/__tests__/**", "jest.config.*", "**/*.bak/**"]
+  "include": ["src", "components", "hooks", "lib", "types", "components/__tests__"],
+  "exclude": ["node_modules", "dist", "jest.config.*", "**/*.bak/**"]
 }
