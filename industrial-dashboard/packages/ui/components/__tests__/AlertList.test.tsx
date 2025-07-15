@@ -48,7 +48,7 @@ describe('AlertList Component', () => {
     expect(alertBadges[3]).toHaveTextContent('INFO');     // menos prioritário
   });
 
-  // 4. Estilos por nível
+  // 3. Estilos por nível
   it('aplica estilos corretos para CRITICAL', () => {
     const alert = generateAlert({ id: '1', level: 'CRITICAL', message: 'Alerta crítico' });
     render(<AlertList alerts={[alert]} />);
