@@ -7,15 +7,22 @@ import { ChartPanel } from '../../../packages/ui/components/ChartPanel';
 import { AlertList } from '../../../packages/ui/components/AlertList';
 import { Efficiency } from '../../../packages/ui/components/Efficiency';
 import { formatUptime } from '../../../packages/ui/lib/utils';
+import { useConfig } from '../../../packages/ui/hooks/useConfig';
 import { useState, useEffect } from 'react';
 
 
 export default function Home() {
+  const { config } = useConfig();
   const [currentStatus, setCurrentStatus] = useState(dataSimulator.getCurrentStatus());
   const [connectionStatus, setConnectionStatus] = useState(dataSimulator.getConnectionStatus());
   const [selectedPeriod, setSelectedPeriod] = useState(60); 
   const [chartData, setChartData] = useState(dataSimulator.getHistoryByPeriod(60));
   const [alerts, setAlerts] = useState(dataSimulator.getAlerts());
+
+  // Efeito para aplicar mudanças de intervalo
+  useEffect(() => {
+    dataSimulator.setUpdateInterval(config.refreshInterval);
+  }, [config.refreshInterval]);
 
   useEffect(() => {
     const unsubscribe = dataSimulator.subscribe((data) => {
@@ -62,6 +69,8 @@ export default function Home() {
           maxValue={85}
           minValue={60}
           isAlert={currentStatus.metrics.temperature > 85}
+          isTemperature={true}
+          temperatureUnit={config.temperatureUnit}
         />
         <MachineStatusCard
           title="RPM"
@@ -97,6 +106,7 @@ export default function Home() {
           data={chartData} 
           onPeriodChange={handlePeriodChange}
           onLimitViolation={handleLimitViolation}
+          temperatureUnit={config.temperatureUnit}
         />
       </section>
       <section className='mt-6 grid grid-cols-1 md:grid-cols-2 gap-4'>

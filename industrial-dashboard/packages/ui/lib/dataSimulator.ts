@@ -7,6 +7,9 @@ class IndustrialDataSimulator {
   private history: MetricHistory[] = [];
   private connectionStatus: ConnectionStatus;
   private listeners: ((data: MachineStatus) => void)[] = [];
+  private updateInterval: number = 3000; // Intervalo padrão de 3 segundos
+  private updateIntervalId: NodeJS.Timeout | null = null;
+  private alertIntervalId: NodeJS.Timeout | null = null;
 
   constructor() {
     this.connectionStatus = {
@@ -85,19 +88,33 @@ class IndustrialDataSimulator {
   }
 
   private startSimulation(): void {
-    // Atualiza dados a cada 3 segundos (conforme requisito: 2-5 segundos)
-    setInterval(() => {
+    // Para os intervalos existentes se houver
+    this.stopSimulation();
+    
+    // Atualiza dados baseado no intervalo configurado
+    this.updateIntervalId = setInterval(() => {
       this.updateMachineStatus();
       this.updateConnectionStatus();
       this.notifyListeners();
-    }, 3000);
+    }, this.updateInterval);
 
     // Gera novos alertas ocasionalmente
-    setInterval(() => {
+    this.alertIntervalId = setInterval(() => {
       if (Math.random() < 0.1) { // 10% chance a cada verificação
         this.generateRandomAlert();
       }
     }, 30000); // A cada 30 segundos
+  }
+
+  private stopSimulation(): void {
+    if (this.updateIntervalId) {
+      clearInterval(this.updateIntervalId);
+      this.updateIntervalId = null;
+    }
+    if (this.alertIntervalId) {
+      clearInterval(this.alertIntervalId);
+      this.alertIntervalId = null;
+    }
   }
 
   private updateMachineStatus(): void {
@@ -289,6 +306,21 @@ class IndustrialDataSimulator {
       this.connectionStatus.isConnected = true;
       this.connectionStatus.lastUpdate = new Date();
     }, duration);
+  }
+
+  // Método para configurar intervalo de atualização
+  public setUpdateInterval(interval: number): void {
+    // Valida intervalo entre 2 e 10 segundos
+    const validInterval = Math.max(2000, Math.min(10000, interval));
+    this.updateInterval = validInterval;
+    
+    // Reinicia a simulação com o novo intervalo
+    this.startSimulation();
+  }
+
+  // Método para obter o intervalo atual
+  public getUpdateInterval(): number {
+    return this.updateInterval;
   }
 }
 

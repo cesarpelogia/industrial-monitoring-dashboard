@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ConfigModal } from './ConfigModal';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -112,8 +113,10 @@ export interface HeaderProps {
 export function Header({ isConnected,lastUpdate }: Omit<HeaderProps, 'isDarkMode' | 'onToggleDarkMode'>) {
 
     const { isDarkMode, userPreference, toggleTheme } = useDarkMode();
+    const [isConfigOpen, setIsConfigOpen] = useState(false);
 
     return (
+        <>
         <header className="w-full flex items-center justify-between bg-white dark:bg-gray-800 shadow px-6 py-4 rounded-md mb-6">
             {/* Lado esquerdo: Logo + Título */}
             <div className="flex items-center space-x-4">
@@ -162,12 +165,22 @@ export function Header({ isConnected,lastUpdate }: Omit<HeaderProps, 'isDarkMode
                 </button>
     
                 {/* Configurações */}
-                <button className={`text-sm hover:underline ${
-                    isDarkMode ? 'text-blue-400' : 'text-blue-600'
-                }`}>
+                <button 
+                    onClick={() => setIsConfigOpen(true)}
+                    className={`text-sm hover:underline ${
+                        isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                    }`}
+                >
                     ⚙️
                 </button>
             </div>
         </header>
+        
+        {/* Modal de Configurações */}
+        <ConfigModal 
+            isOpen={isConfigOpen} 
+            onClose={() => setIsConfigOpen(false)} 
+        />
+        </>
     );
 }
