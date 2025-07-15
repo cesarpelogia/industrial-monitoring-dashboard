@@ -27,7 +27,7 @@ const METRIC_CONFIGS = {
     name: 'Temperatura',
     unit: '°C',
     color: '#f59e0b',
-    scale: { min: 55, max: 90 }  // Escala otimizada para visualização
+    scale: { min: 50, max: 100 }  // Escala otimizada para visualização com margem adequada
   },
   rpm: {
     ideal: 1400,   // RPM ideal
@@ -45,7 +45,7 @@ const METRIC_CONFIGS = {
     name: 'Eficiência',
     unit: '%',
     color: '#10b981',
-    scale: { min: 90, max: 100 }  // Escala otimizada para visualização
+    scale: { min: 80, max: 100 }  // Escala otimizada para visualização (80-100%)
   }
 } as const;
 
@@ -56,6 +56,16 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
     rpm: true,
     efficiency: true
   });
+
+  // Formata dados para exibição
+  const convertedData = data.map(point => ({
+    ...point,
+    timestamp: point.timestamp.toLocaleTimeString('pt-BR', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    })
+  }));
 
   const periodOptions = [
     { value: 15, label: 'Últimos 15 min' },
@@ -117,20 +127,21 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
   };
 
   // Formata os dados para o chart e verifica limites
-  const chartData = data.map(point => {
+  const chartData = convertedData.map((point, index) => {
     // Verifica violações para o ponto mais recente
-    if (point === data[data.length - 1]) {
-      checkLimitViolations(point);
+    if (index === convertedData.length - 1) {
+      // Para verificação de limites, usa dados originais
+      const originalPoint = data[data.length - 1];
+      if (originalPoint) {
+        checkLimitViolations(originalPoint);
+      }
     }
 
     const visibleMetricsCount = Object.values(visibleMetrics).filter(Boolean).length;
     const useNormalization = visibleMetricsCount > 1;
 
     return {
-      time: point.timestamp.toLocaleTimeString('pt-BR', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      }),
+      time: point.timestamp,
       temperature: useNormalization ? normalizeValue(point.temperature, 'temperature') : point.temperature,
       rpm: useNormalization ? normalizeValue(point.rpm, 'rpm') : point.rpm,
       efficiency: useNormalization ? normalizeValue(point.efficiency, 'efficiency') : point.efficiency,
@@ -138,7 +149,7 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
       originalTemperature: point.temperature,
       originalRpm: point.rpm,
       originalEfficiency: point.efficiency,
-      timestamp: point.timestamp.getTime()
+      timestamp: data[index]?.timestamp.getTime() || point.timestamp
     };
   });
 
@@ -315,7 +326,7 @@ export function ChartPanel({ data, onPeriodChange, onLimitViolation }: Props) {
           {visibleMetrics.temperature && (
             <div className="flex items-center gap-2">
               <span className="w-3 h-0.5 bg-amber-500 inline-block"></span>
-              <span>Temp: {METRIC_CONFIGS.temperature.ideal}°C ideal | {METRIC_CONFIGS.temperature.min}-{METRIC_CONFIGS.temperature.max}°C limites</span>
+              <span>Temp: {METRIC_CONFIGS.temperature.ideal.toFixed(1)}{METRIC_CONFIGS.temperature.unit} ideal | {METRIC_CONFIGS.temperature.min.toFixed(1)}-{METRIC_CONFIGS.temperature.max.toFixed(1)}{METRIC_CONFIGS.temperature.unit} limites</span>
             </div>
           )}
           {visibleMetrics.rpm && (
